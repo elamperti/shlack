@@ -18,42 +18,102 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 function post_to_slack () {
+  # Parse arguments using getopt
+  local long_options="message:,text:,channel:,botname:,icon:,hook:"
+  # shellcheck disable=SC2155
+  local parsed_opts=$(getopt --longoptions="${long_options}" --name="Shlack" -- "$0" "$@") 
+  if [[ $? -ne 0 ]]; then
+    echo "Error parsing arguments"
+    return 1 # error parsing
+  fi
+  eval set -- "${parsed_opts}"
+
+  # Declare variables we'll need later
+  local slack_message=""
+  local slack_channel=""
+  local slack_bot_name=""
+  local slack_icon=""
   local slack_hook_url=""
-  if [ -n "${SLACK_URL}" ]; then
-    slack_hook_url="${SLACK_URL}"
-  else
-    if [ -f ".slack-hook" ]; then
-      slack_hook_url=$(cat .slack-hook)
+
+  # Go through the parsed opts until '--' is found
+  while true; do
+    case "$1" in
+      --text|--message)
+        slack_message="$2"
+        shift 2
+        ;;
+      --channel)
+        slack_channel="$2"
+        shift 2
+        ;;
+      --botname)
+        slack_bot_name="$2"
+        shift 2
+        ;;
+      --icon)
+        slack_icon="$2"
+        shift 2
+        ;;
+      --hook)
+        slack_hook_url="$2"
+        shift 2
+        ;;
+      --)
+        shift
+        break
+        ;;
+    esac
+  done
+
+  # Check if there's a hook already defined
+  if [ -z "${slack_hook_url}" ]; then
+    # Try to use env variable SLACK_URL
+    if [ -n "${SLACK_URL}" ]; then
+      slack_hook_url="${SLACK_URL}"
     else
-      echo "Slack hook is undefined."
-      exit 1
+      # Last try: a .slack-hook file with the hook in it
+      if [ -f ".slack-hook" ]; then
+        slack_hook_url=$(cat .slack-hook)
+      else
+        echo "Slack hook is undefined."
+        echo "Check shlack documentation at https://github.com/elamperti/shlack#setup"
+        return 1
+      fi
     fi
   fi
 
-  local slack_message="$1"
-  local slack_bot_name="$2"
-    [ -z "${slack_bot_name}" ] && slack_bot_name="Bot"
-  local slack_icon="$3"
-    [ -z "${slack_icon}" ] && slack_icon="robot_face"
-  slack_icon=":${slack_icon}:"
-  local extra_payload=""
-
-  if [ -n "$4" ]; then
-    extra_payload="\"channel\": \"$4\","
+  # The message is a required parameter
+  if [ -z "${slack_message}" ]; then
+    echo "Payload must contain a message."
+    return 1
   fi
 
-  read -r -d '' slack_payload <<- EOM
+  # Normalize icon string so it has colons around it
+  if [ -n "${slack_icon}" ]; then
+    # shellcheck disable=SC2001
+    slack_icon=":$(echo "${slack_icon}"|sed 's/^://;s/:$//'):"
+  fi
+
+  # Fill payload with data
+  read -r -d '' slack_payload <<EOM
     {
-      ${extra_payload}
-      "text": "${slack_message}",
+      "channel": "${slack_channel}",
       "username": "${slack_bot_name}",
-      "icon_emoji": "${slack_icon}"
+      "icon_emoji": "${slack_icon}",
+      "text": "${slack_message}"
     }
 EOM
-  # Ugly formatting
+
+  # Remove empty data (everything that ends up with "")
+  # shellcheck disable=SC2001
+  slack_payload=$(echo "${slack_payload}"|sed 's/\"[a-z_]*\":\ \"\",//gi')
+
+  # Convert payload to one line
   slack_payload=${slack_payload//$'\n'/}
   slack_payload=${slack_payload//  /}
 
-  curl -X POST --data "payload=${slack_payload}" ${slack_hook_url}
+  curl -X POST --data "payload=${slack_payload}" "${slack_hook_url}"
 }
 
+# If the script is called directly invoke post_to_slack 
+[[ "${BASH_SOURCE[0]}" != "$0" ]] || post_to_slack "$@"

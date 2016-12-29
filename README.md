@@ -2,8 +2,11 @@
 
 This simple script aims to ease the sending of [Slack](https://slack.com/) messages from CLI, and specially from (scripted) automated processes.
 
-## Screenshot
+## Demo
 ![Slack message sent with custom bot name and emoji icon](https://cloud.githubusercontent.com/assets/910672/21515488/0116c8ac-ccaf-11e6-8a66-93e4e9cdd01c.jpg)
+```
+post_to_slack --text="This is a Shlack test!" --botname="Adalmiro Jacinto" --icon="fishing_pole_and_fish" --channel="#general"
+```
 
 ## Requirements
   - A Slack team, of course
@@ -22,26 +25,15 @@ The `.slack-hook` will be read from the current directory, which may be differen
 This enables you to use different URLs for different teams or situations according to the context (the directory) where it's being used.
 
 ## Usage
-Just source `shlack.sh` so the `post_to_slack` function is available, then call that function to post to Slack.
+The script can be called directly (e.g. `$ shlack.sh --text "Hello world"`) or sourced. If you source it, the `post_to_slack` function becomes available.
 
 ### Syntax
-
-```
-post_to_slack "Message to send" ["Bot name" ["emoji to customize icon" ["channel or username"]]]
-```
-
-  * The only thing you _really_ need in order to post is a **message**.
-  * **Bot name** will default to "Bot"
-  * **Icon** will default to `robot_face`. The emoji name should be written without `:`.
-  * **Channel/Username** will default to the one set for the given hook configuration.
-
-The syntax will evolve to named arguments (soon™).
-
-### Example
-
-```
-post_to_slack "This is a Shlack test!" "Adalmiro Jacinto" "fishing_pole_and_fish" "#general"
-```
+The following options are available:
+  * `--text`: **Required**. The message to post.
+  * `--hook`: Slack hook URL. Overrides the `SLACK_URL` environment variable and `.slack-hook` file.
+  * `--channel`: Channel or username. Defaults to the channel defined in the hook configuration.
+  * `--botname`: The displayed nickname for the bot. Defaults to the name defined in the hook configuration. 
+  * `--icon`: An emoji name; colons around it aren't required. Defaults to the icon defined in the hook configuration. 
 
 ## License
 Copyright (C) 2016  Enrico Lamperti
