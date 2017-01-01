@@ -84,8 +84,18 @@ function post_to_slack () {
 
   # The message is a required parameter
   if [ -z "${slack_message}" ]; then
-    echo "Payload must contain a message."
-    return 1
+    # Try to read message from stdin
+    local tmp_stdin=""
+    while read -r line; do
+      tmp_stdin="${tmp_stdin}${line}\n"
+    done < /dev/stdin
+
+    if [ -n "${tmp_stdin}" ]; then
+      slack_message="${tmp_stdin}"
+    else
+      echo "Payload must contain a message."
+      return 1
+    fi
   fi
 
   # Normalize icon string so it has colons around it

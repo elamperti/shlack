@@ -30,7 +30,7 @@ If you source it, use `post_to_slack` to post messages to Slack.
 
 ### Options
 The following options are available:
-  * `--text`: **Required**. The message to post.
+  * `--text`: The message to post. If omitted will try to use stdin.
   * `--hook`: Slack hook URL. Overrides the `SLACK_URL` environment variable and `.slack-hook` file.
   * `--channel`: Channel or username. Defaults to the channel defined in the hook configuration.
   * `--botname`: The displayed nickname for the bot. Defaults to the name defined in the hook configuration. 
