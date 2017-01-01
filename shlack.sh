@@ -91,7 +91,7 @@ function post_to_slack () {
   if [ -z "${slack_message}" ]; then
     # Try to read message from stdin
     local tmp_stdin=""
-    while read -r line; do
+    while read -t 2 -r line; do
       tmp_stdin="${tmp_stdin}${line}\n"
     done < /dev/stdin
 
