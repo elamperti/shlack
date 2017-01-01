@@ -19,7 +19,7 @@
 
 function post_to_slack () {
   # Parse arguments using getopt
-  local long_options="message:,text:,channel:,botname:,icon:,hook:"
+  local long_options="message:,text:,channel:,botname:,icon:,hook:,debug"
   # shellcheck disable=SC2155
   local parsed_opts=$(getopt --longoptions="${long_options}" --name="Shlack" -- "$0" "$@") 
   if [[ $? -ne 0 ]]; then
@@ -29,6 +29,7 @@ function post_to_slack () {
   eval set -- "${parsed_opts}"
 
   # Declare variables we'll need later
+  local debug_mode=false
   local slack_message=""
   local slack_channel=""
   local slack_bot_name=""
@@ -57,6 +58,10 @@ function post_to_slack () {
       --hook)
         slack_hook_url="$2"
         shift 2
+        ;;
+      --debug)
+        debug_mode=true
+        shift
         ;;
       --)
         shift
@@ -122,6 +127,14 @@ EOM
   slack_payload=${slack_payload//$'\n'/}
   slack_payload=${slack_payload//  /}
 
+  # Debug mode prints payload without actually posting to slack
+  if [ "${debug_mode}" = true ]; then
+    echo "Slack hook URL: ${slack_hook_url}"
+    echo "Payload: ${slack_payload}"
+    return 0
+  fi
+
+  # Post to slack!
   curl -X POST --data "payload=${slack_payload}" "${slack_hook_url}"
 }
 
