@@ -1,4 +1,4 @@
-# Shlack
+# Shlack [![Build Status](https://travis-ci.org/elamperti/shlack.svg?branch=master)](https://travis-ci.org/elamperti/shlack)
 
 This simple script aims to ease the sending of [Slack](https://slack.com/) messages from CLI, and specially from (scripted) automated processes.
 
@@ -37,8 +37,11 @@ The following options are available:
   * `--icon`: An emoji name; colons around it aren't required. Defaults to the icon defined in the hook configuration. 
   * `--debug`: prints hook URL and payload to stdout instead of posting to Slack
 
-## Caveats
+### Caveats
 If a message wasn't defined using `--text`, Shlack will wait for input on stdin only for 2 seconds, otherwise the script would hang forever when stdin is empty.
+
+## Testing
+Tests are written in [Bats](https://github.com/sstephenson/bats), run `bats test` to execute them.
 
 ## License
 Copyright (C) 2016  Enrico Lamperti
