@@ -5,7 +5,7 @@
 ##
 
 function get_payload_item() {
-  echo "$2" | grep -Ev '^Slack hook URL' | sed "s/.*\"$1\": \"//;s/\",.*//;s/\"\}//"
+  echo -n "$2" | grep -Ev '^Slack hook URL' | grep -i "$1" | sed "s/.*\"$1\": \"//;s/\",.*//;s/\"\}//"
 }
 
 
@@ -29,8 +29,20 @@ function get_payload_item() {
 }
 
 ##
-## Emoji tests
+## Icon and emoji tests
 ##
+
+@test "discard icon_url if emoji icon defined" {
+  result=$(./shlack.sh --debug --hook="foo" --text="test" --icon_url="http://example.com/image.png" --icon=":confused:")
+  icon_url=$(get_payload_item "icon_url" "$result")
+  [ -z "$icon_url" ] 
+}
+
+@test "use icon_url if no emoji specified" {
+  result=$(./shlack.sh --debug --hook="foo" --text="test" --icon_url="http://example.com/image.png")
+  icon_url=$(get_payload_item "icon_url" "$result")
+  [ "$icon_url" = "http://example.com/image.png" ]
+}
 
 @test "handle emoji surrounded by colons" {
   result=$(./shlack.sh --debug --hook="foo" --text="test" --icon=":banana:")

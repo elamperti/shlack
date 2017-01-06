@@ -19,7 +19,7 @@
 
 function post_to_slack () {
   # Parse arguments using getopt
-  local long_options="message:,text:,channel:,botname:,icon:,hook:,debug"
+  local long_options="message:,text:,channel:,botname:,icon:,icon_url:,hook:,debug"
   # shellcheck disable=SC2155
   local parsed_opts=$(getopt --longoptions="${long_options}" --name="Shlack" -- "$0" "$@") 
   if [[ $? -ne 0 ]]; then
@@ -34,6 +34,7 @@ function post_to_slack () {
   local slack_channel=""
   local slack_bot_name=""
   local slack_icon=""
+  local slack_icon_url=""
   local slack_hook_url=""
 
   # Go through the parsed opts until '--' is found
@@ -53,6 +54,10 @@ function post_to_slack () {
         ;;
       --icon)
         slack_icon="$2"
+        shift 2
+        ;;
+      --icon_url)
+        slack_icon_url="$2"
         shift 2
         ;;
       --hook)
@@ -103,10 +108,13 @@ function post_to_slack () {
     fi
   fi
 
-  # Normalize icon string so it has colons around it
   if [ -n "${slack_icon}" ]; then
+    # Normalize icon string so it has colons around it
     # shellcheck disable=SC2001
     slack_icon=":$(echo "${slack_icon}"|sed 's/^://;s/:$//'):"
+
+    # Resets icon_url (it won't be used)
+    slack_icon_url=""
   fi
 
   # Fill payload with data
@@ -115,6 +123,7 @@ function post_to_slack () {
       "channel": "${slack_channel}",
       "username": "${slack_bot_name}",
       "icon_emoji": "${slack_icon}",
+      "icon_url": "${slack_icon_url}",
       "text": "${slack_message}"
     }
 EOM

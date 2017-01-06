@@ -34,7 +34,8 @@ The following options are available:
   * `--hook`: Slack hook URL. Overrides the `SLACK_URL` environment variable and `.slack-hook` file.
   * `--channel`: Channel or username. Defaults to the channel defined in the hook configuration.
   * `--botname`: The displayed nickname for the bot. Defaults to the name defined in the hook configuration. 
-  * `--icon`: An emoji name; colons around it aren't required. Defaults to the icon defined in the hook configuration. 
+  * `--icon_url`: URL to an image to use as icon for the message.
+  * `--icon`: Emoji to use as icon; colons around it aren't required. Overrides `icon_url`. Defaults to the icon defined in the hook configuration.
   * `--debug`: prints hook URL and payload to stdout instead of posting to Slack
 
 ### Caveats
