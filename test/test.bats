@@ -24,6 +24,10 @@ function get_payload_item() {
 }
 
 @test "fail without a hook URL" {
+  if [ -f ".slack-hook" ]; then
+    skip ".slack-hook present"
+  fi
+
   run ./shlack.sh --debug --hook="" --text="test"
   [ "$status" -eq 1 ]
 }
