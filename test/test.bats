@@ -13,6 +13,11 @@ function get_payload_item() {
 ## Basic tests
 ##
 
+@test "code passes Shellcheck with no warnings" {
+  run shellcheck shlack.sh
+  [ "$status" -eq 0 ]
+}
+
 @test "exit correctly after sending a message" {
   run ./shlack.sh --debug --text="test" --hook="http://hooks.slack.com/services/almost/legit/hook"
   [ "$status" -eq 0 ]
