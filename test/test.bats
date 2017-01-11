@@ -13,7 +13,11 @@ function get_payload_item() {
 ## Basic tests
 ##
 
-@test "code passes Shellcheck with no warnings" {
+@test "pass ShellCheck with no warnings" {
+  if ! command -v 'shellcheck'; then
+    skip "ShellCheck not found"
+  fi
+
   run shellcheck shlack.sh
   [ "$status" -eq 0 ]
 }
@@ -36,6 +40,7 @@ function get_payload_item() {
   run ./shlack.sh --debug --hook="foo"
   [ "$status" -eq 1 ]
 }
+
 
 ##
 ## Icon and emoji tests

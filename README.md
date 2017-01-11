@@ -36,7 +36,7 @@ The following options are available:
   * `--botname`: The displayed nickname for the bot. Defaults to the name defined in the hook configuration. 
   * `--icon_url`: URL to an image to use as icon for the message.
   * `--icon`: Emoji to use as icon; colons around it aren't required. Overrides `icon_url`. Defaults to the icon defined in the hook configuration.
-  * `--debug`: prints hook URL and payload to stdout instead of posting to Slack
+  * `--debug`: prints hook URL and payload to stdout instead of posting to Slack.
 
 ### Caveats
 If a message wasn't defined using `--text`, Shlack will wait for input on stdin only for 2 seconds, otherwise the script would hang forever when stdin is empty.
