@@ -38,6 +38,7 @@ The following options are available:
   * `--icon`: Emoji to use as icon; colons around it aren't required. Overrides `icon_url`. Defaults to the icon defined in the hook configuration.
   * `--debug`: Prints hook URL and payload to stdout instead of posting to Slack.
   * `--silent`: Response won't be printed to stdout.
+  * `--no-markdown`: Tells Slack the message must not be formatted as Markdown.
 
 ### Caveats
 If a message wasn't defined using `--text`, Shlack will wait for input on stdin only for 2 seconds, otherwise the script would hang forever when stdin is empty.

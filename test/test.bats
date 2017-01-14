@@ -41,6 +41,18 @@ function get_payload_item() {
   [ "$status" -eq 1 ]
 }
 
+@test "leave mrkdwn option undefined by default" {
+  result=$(./shlack.sh --debug --hook="foo" --text="test")
+  md_option=$(get_payload_item "mrkdwn" "$result")
+  echo -n "$md_option" > fofito
+  [ -z "$md_option" ]
+}
+
+@test "add option to disable markdown" {
+  result=$(./shlack.sh --debug --hook="foo" --text="test" --no-markdown)
+  md_option=$(get_payload_item "mrkdwn" "$result")
+  [ "$md_option" = "false" ]
+}
 
 ##
 ## Icon and emoji tests

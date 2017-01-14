@@ -19,7 +19,7 @@
 
 post_to_slack () {
   # Parse arguments using getopt
-  local long_options="message:,text:,channel:,botname:,icon:,icon_url:,hook:,debug,silent"
+  local long_options="message:,text:,channel:,botname:,icon:,icon_url:,hook:,debug,silent,no-markdown"
   # shellcheck disable=SC2155
   local parsed_opts=$(getopt --longoptions="${long_options}" --name="Shlack" -- "$0" "$@") 
   if [[ $? -ne 0 ]]; then
@@ -31,6 +31,7 @@ post_to_slack () {
   # Declare variables we'll need later
   local debug_mode=false
   local silent_mode=false
+  local slack_markdown=""
   local slack_message=""
   local slack_channel=""
   local slack_bot_name=""
@@ -64,6 +65,10 @@ post_to_slack () {
       --hook)
         slack_hook_url="$2"
         shift 2
+        ;;
+      --no-markdown)
+        slack_markdown="false"
+        shift
         ;;
       --debug)
         debug_mode=true
@@ -129,6 +134,7 @@ post_to_slack () {
       "username": "${slack_bot_name}",
       "icon_emoji": "${slack_icon}",
       "icon_url": "${slack_icon_url}",
+      "mrkdwn": "${slack_markdown}",
       "text": "${slack_message}"
     }
 EOM
