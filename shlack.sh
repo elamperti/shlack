@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-function post_to_slack () {
+post_to_slack () {
   # Parse arguments using getopt
   local long_options="message:,text:,channel:,botname:,icon:,icon_url:,hook:,debug"
   # shellcheck disable=SC2155
