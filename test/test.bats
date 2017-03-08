@@ -41,10 +41,21 @@ function get_payload_item() {
   [ "$status" -eq 1 ]
 }
 
+@test "accept text from stdin" {
+  result=$(echo -n "test" | ./shlack.sh --debug --hook="foo")
+  message=$(get_payload_item "text" "$result")
+  [ "$message" = "test" ]
+}
+
+@test "respond to post_to_slack calls after being sourced" {
+  result=$(source shlack.sh; post_to_slack --debug --text="test" --hook="foo")
+  message=$(get_payload_item "text" "$result")
+  [ "$message" = "test" ]
+}
+
 @test "leave mrkdwn option undefined by default" {
   result=$(./shlack.sh --debug --hook="foo" --text="test")
   md_option=$(get_payload_item "mrkdwn" "$result")
-  echo -n "$md_option" > fofito
   [ -z "$md_option" ]
 }
 
