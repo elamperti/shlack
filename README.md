@@ -4,7 +4,8 @@ This simple script aims to ease the sending of [Slack](https://slack.com/) messa
 
 ## Demo
 <p align="center"><img src="https://cloud.githubusercontent.com/assets/910672/21553414/e9957f6e-cde6-11e6-92eb-d64f9822ef23.png" alt="Slack message sent with custom bot name and emoji icon" height="36" width="166"></p>
-```
+
+```shell
 post_to_slack --text="This is a test!" --botname="My bot" --icon="robot_face" --channel="#general"
 ```
 
